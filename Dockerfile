@@ -142,7 +142,10 @@ COPY --chown=${PENTAHO_USER}:${PENTAHO_GROUP} "sql/${PENTAHO_VERSION}" "${LB_DIR
 RUN chown -R "${PENTAHO_USER}:${PENTAHO_GROUP}" "${LB_DIR}" && \
     chmod -R "o=" "${LB_DIR}"
 
-RUN mvn-get "${CW_SRC}" "${CW_REPO}" "/usr/local/bin/curator-wrapper.jar"
+
+RUN --mount=type=secret,id=mvn_get_auth \
+    . /run/secrets/mvn_get_auth && \
+    mvn-get "${CW_SRC}" "${CW_REPO}" "/usr/local/bin/curator-wrapper.jar"
 
 COPY --from=tomcat --chmod=0755 /usr/local/bin/set-session-cookie-name /usr/local/bin/
 
