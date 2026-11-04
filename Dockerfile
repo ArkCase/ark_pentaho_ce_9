@@ -101,7 +101,7 @@ RUN set-java "${JAVA}" && \
 ENV PATH="${PENTAHO_SERVER}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 ENV LD_LIBRARY_PATH="${PENTAHO_TOMCAT}/lib"
 
-COPY entrypoint /
+COPY entrypoint /usr/local/bin
 
 COPY --chown=${PENTAHO_USER}:${PENTAHO_GROUP} --chmod=0640 "server.xml" "logging.properties" "catalina.properties" "${PENTAHO_TOMCAT}/conf/"
 COPY --chown=${PENTAHO_USER}:${PENTAHO_GROUP} --chmod=0750 start-pentaho.sh "${PENTAHO_SERVER}/"
@@ -164,4 +164,3 @@ VOLUME [ "${LOGS_DIR}" ]
 
 EXPOSE "${PENTAHO_PORT}"
 WORKDIR "${PENTAHO_SERVER}"
-ENTRYPOINT [ "/entrypoint" ]
