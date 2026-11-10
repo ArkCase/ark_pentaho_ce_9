@@ -104,8 +104,8 @@ COPY entrypoint /usr/local/bin
 COPY --chown=${PENTAHO_USER}:${PENTAHO_GROUP} --chmod=0640 "server.xml" "logging.properties" "catalina.properties" "${PENTAHO_TOMCAT}/conf/"
 COPY --chown=${PENTAHO_USER}:${PENTAHO_GROUP} --chmod=0750 start-pentaho.sh "${PENTAHO_SERVER}/"
 COPY --chown=${PENTAHO_USER}:${PENTAHO_GROUP} --chmod=0640 repository.spring.xml "${PENTAHO_SERVER}/pentaho-solutions/system/"
-RUN chown -R "${PENTAHO_UID}:${PENTAHO_GID}" "${BASE_DIR}"/* && \
-    chmod -R "u=rwX,g=rX,o=" "${BASE_DIR}"/* && \
+RUN chown -R "${PENTAHO_UID}:${PENTAHO_GID}" "${BASE_DIR}" && \
+    chmod -R "u=rwX,g=rX,o=" "${BASE_DIR}" && \
     chown "${PENTAHO_USER}:${PENTAHO_GROUP}" "${PENTAHO_TOMCAT}/conf"/* && \
     chmod "u=rwX,go=r" "${PENTAHO_TOMCAT}/conf"/* && \
     rm -f "${PENTAHO_SERVER}/promptuser.sh" "${PENTAHO_SERVER}"/*.bat "${PENTAHO_SERVER}"/*.js && \
