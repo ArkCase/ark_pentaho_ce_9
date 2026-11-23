@@ -27,11 +27,19 @@ ARG BASE_IMG="${BASE_REGISTRY}/${BASE_REPO}:${BASE_VER_PFX}${BASE_VER}"
 ARG PENTAHO_INSTALL_REPO="arkcase/pentaho-ce-${VER%%.*}-install"
 ARG PENTAHO_INSTALL_IMG="${PRIVATE_REGISTRY}/${PENTAHO_INSTALL_REPO}:${BASE_VER_PFX}${VER}"
 
+ARG ETL_SERVER_REGISTRY="${BASE_REGISTRY}"
+ARG ETL_SERVER_REPO="arkcase/rebuild-etl-server"
+ARG ETL_SERVER_VER="latest"
+ARG ETL_SERVER_VER_PFX="${BASE_VER_PFX}"
+ARG ETL_SERVER_IMG="${ETL_SERVER_REGISTRY}/${ETL_SERVER_REPO}${FIPS}:${ETL_SERVER_VER_PFX}${ETL_SERVER_VER}"
+
 ARG TOMCAT_REGISTRY="${BASE_REGISTRY}"
 ARG TOMCAT_REPO="arkcase/base-tomcat"
 ARG TOMCAT_VER="latest"
 ARG TOMCAT_VER_PFX="${BASE_VER_PFX}"
 ARG TOMCAT_IMG="${TOMCAT_REGISTRY}/${TOMCAT_REPO}:${TOMCAT_VER_PFX}${TOMCAT_VER}"
+
+FROM "${ETL_SERVER_IMG}" AS etl-server
 
 FROM "${PENTAHO_INSTALL_IMG}" AS src
 
@@ -142,6 +150,8 @@ RUN chown -R "${PENTAHO_USER}:${PENTAHO_GROUP}" "${LB_DIR}" && \
 
 
 RUN --mount=type=secret,id=mvn_get_auth \
+    --mount=type=bind,from=etl-server,target=/etl,id=etl-server,ro=true \
+    install -o root -g root -m 0755 -t "/usr/local/bin" /etl/* && \
     . /run/secrets/mvn_get_auth && \
     mvn-get "${CW_SRC}" "${CW_REPO}" "/usr/local/bin/curator-wrapper.jar"
 
